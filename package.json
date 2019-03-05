@@ -1,0 +1,5 @@
+"dependencies": {
+        "silverstripe/framework": "~4.0",
+        "silverstripe/vendor-plugin": "^1.0",
+        "silverstripe/spamprotection": "~3.0"
+}
