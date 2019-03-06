@@ -44,8 +44,6 @@ function recaptchaMultipleFieldRender() {
 
         let widgetID = e.target.querySelectorAll('.g-recaptcha')[0].getAttribute('data-widgetid');
         grecaptcha.execute( widgetID );
-
-        alert(widgetID)
     };
 
     for(var i=0;i<_recaptchaMultipleFields.length;i++) {
