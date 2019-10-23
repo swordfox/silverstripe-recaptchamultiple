@@ -86,6 +86,12 @@ class RecaptchaMultipleField extends FormField {
     private $_captchaBadge;
 
     /**
+     * Captcha callback, user defined function
+     * @var string
+     */
+    private $_captchaCallback;
+
+    /**
      * Creates a new Recaptcha 2 field.
      * @param string $name The internal field name, passed to forms.
      * @param string $title The human-readable field label.
@@ -245,6 +251,25 @@ class RecaptchaMultipleField extends FormField {
      */
     public function getCaptchaBadge() {
         return $this->_captchaBadge;
+    }
+
+    /**
+     * Sets the callback function
+     * @param string $value
+     * @return RecaptchaMultipleField
+     */
+    public function setCallback($value) {
+        $this->_captchaCallback=$value;
+
+        return $this;
+    }
+
+    /**
+     * Gets the Badge position for this captcha
+     * @return string
+     */
+    public function getCallback() {
+        return $this->_captchaCallback;
     }
 
     /**

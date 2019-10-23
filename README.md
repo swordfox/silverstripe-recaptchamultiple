@@ -28,6 +28,14 @@ $form->enableSpamProtection()
 	->setDescription("Please tick the box to prove you're a human and help us stop spam.");
 ```
 
+Set a callback for each field, handy for ajax forms
+
+```php
+$form->enableSpamProtection()
+	->fields()->fieldByName('Captcha')
+	->setCallback("onSubmit");
+```
+
 ## Configuration
 There are multiple configuration options for the field, you must set the site_key and the secret_key which you can get from the [reCAPTCHA page](https://www.google.com/recaptcha). These configuration options must be added to a config filee.g. mysite/\_config/recaptchamultiple.yml.
 ```yml
