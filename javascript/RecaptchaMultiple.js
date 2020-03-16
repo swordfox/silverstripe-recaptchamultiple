@@ -34,66 +34,43 @@ var recaptchaMultipleFormID;
 
         $.getScript(('https:' == document.location.protocol ? 'https://www' : 'http://www') + '.google.com/recaptcha/api.js?render=explicit&hl=en&onload=recaptchaMultipleFieldRender');
     });
-})(jQuery);
 
+    recaptchaMultipleFieldRender = function() {
+        for (var i = 0; i < _recaptchaMultipleFields.length; i++) {
+            var field = $('#' + _recaptchaMultipleFields[i]);
 
-function recaptchaMultipleFieldRender() {
+            if (field.data("widgetid") == null) {
+                //For the invisible captcha we need to setup some callback listeners
+                if (field.data('size') == 'invisible') {
+                    var form = $('#' + field.data('form'));
 
-    var submitListener = function(e) {
-        e.preventDefault();
+                    form.on('submit', function(e) {
+                        e.preventDefault();
 
-        let widgetID = e.target.querySelectorAll('.g-recaptcha')[0].getAttribute('data-widgetid');
-        grecaptcha.execute(widgetID);
-    };
+                        let widgetID = form.find('.g-recaptcha').data('widgetid');
+                        grecaptcha.execute(widgetID);
+                    });
 
-    for (var i = 0; i < _recaptchaMultipleFields.length; i++) {
-        var field = document.getElementById(_recaptchaMultipleFields[i]);
-
-        if (field.getAttribute("data-widgetid") == null) {
-
-
-            //For the invisible captcha we need to setup some callback listeners
-            if (field.getAttribute('data-size') == 'invisible') {
-                var form = document.getElementById(field.getAttribute('data-form'));
-                var superHandler = false;
-
-                if (typeof jQuery != 'undefined' && typeof jQuery.fn.validate != 'undefined') {
-                    var formValidator = jQuery(form).data('validator');
-                    var superHandler = formValidator.settings.submitHandler;
-                    formValidator.settings.submitHandler = function(form) {
-                        grecaptcha.execute();
+                    window[_recaptchaMultipleFields[i]] = function() {
+                        return new Promise(function(resolve, reject) {
+                            form.submit();
+                            resolve();
+                        });
                     };
-                } else {
-                    if (form && form.addEventListener) {
-                        form.addEventListener('submit', submitListener);
-                    } else if (form && form.attachEvent) {
-                        window.attachEvent('onsubmit', submitListener);
-                    } else if (console.error) {
-                        console.error('Could not attach event to the form');
-                    }
                 }
 
-                window[_recaptchaMultipleFields[i]] = function() {
-                    if (typeof jQuery != 'undefined' && typeof jQuery.fn.validate != 'undefined' && superHandler) {
-                        superHandler(form);
-                    } else {
-                        var form = document.getElementById(recaptchaMultipleFormID);
-                        form.submit();
-                    }
+                var options = {
+                    'sitekey': field.data('sitekey'),
+                    'theme': field.data('theme'),
+                    'type': field.data('type'),
+                    'size': field.data('size'),
+                    'badge': field.data('badge'),
+                    'callback': (field.data('callback') ? field.data('callback') : _recaptchaMultipleFields[i])
                 };
+
+                var widget_id = grecaptcha.render(field[0], options);
+                field.data("widgetid", widget_id);
             }
-
-            var options = {
-                'sitekey': field.getAttribute('data-sitekey'),
-                'theme': field.getAttribute('data-theme'),
-                'type': field.getAttribute('data-type'),
-                'size': field.getAttribute('data-size'),
-                'badge': field.getAttribute('data-badge'),
-                'callback': (field.getAttribute('data-callback') ? field.getAttribute('data-callback') : _recaptchaMultipleFields[i])
-            };
-
-            var widget_id = grecaptcha.render(field, options);
-            field.setAttribute("data-widgetid", widget_id);
         }
     }
-}
+})(jQuery);
